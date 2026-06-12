@@ -84,13 +84,14 @@ a { color: var(--green); }
 /* Hero with mark */
 .hero {
   display: flex;
-  align-items: center;
-  gap: 36px;
+  align-items: flex-start;
+  gap: 28px;
 }
 .hero .lede { flex: 1; }
 .mark {
-  flex: 0 0 230px;
-  filter: drop-shadow(0 0 28px var(--glow-warm));
+  flex: 0 0 120px;
+  margin-top: 4px;
+  filter: drop-shadow(0 0 14px var(--glow-warm));
 }
 .mark img { width: 100%; height: auto; display: block; }
 
@@ -165,5 +166,4 @@ article blockquote {
   border-left: 3px solid var(--green);
   color: var(--text-dim);
 }
-article img {
-  max-width: 100%;
+article im
