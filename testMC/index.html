@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IRON VIKINGS MC • An International Brotherhood</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Iron Vikings MC — a law-abiding international three-piece motorcycle club. Respect ALL, fear NONE.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0b0c0e;
+    --iron:#15171b;
+    --steel:#1f2228;
+    --edge:#2c3038;
+    --bone:#e8e4da;
+    --ash:#9aa0a8;
+    --orange:#ff6f03;
+    --orange-bright:#ff8a2a;
+    --gold:#c9a24b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--bone);font-family:'Inter',sans-serif;line-height:1.65}
+  h1,h2,h3,.brand{font-family:'Cinzel',serif;letter-spacing:.04em}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  /* ===== NAV ===== */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,12,14,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--edge)}
+  .nav-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.05rem;color:var(--bone)}
+  .brand img{width:42px;height:42px;object-fit:contain}
+  .brand span em{color:var(--orange-bright);font-style:normal}
+  .nav-links{display:flex;gap:28px;font-size:.83rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+  .nav-links a{color:var(--ash);transition:color .2s}
+  .nav-links a:hover{color:var(--bone)}
+  .nav-links a.cta{color:var(--bone);border:1px solid var(--orange);padding:8px 18px;border-radius:3px;transition:background .2s}
+  .nav-links a.cta:hover{background:var(--orange)}
+  .burger{display:none;background:none;border:none;color:var(--bone);font-size:1.6rem;cursor:pointer}
+  @media(max-width:880px){
+    .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--iron);flex-direction:column;gap:0;border-bottom:1px solid var(--edge)}
+    .nav-links.open{display:flex}
+    .nav-links a{padding:16px 24px;border-top:1px solid var(--edge)}
+    .nav-links a.cta{border:none;border-top:1px solid var(--edge)}
+    .burger{display:block}
+  }
+
+  /* ===== HERO ===== */
+  header{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(255,111,3,.12), transparent 55%),
+      linear-gradient(180deg, var(--iron), var(--black) 80%);
+  }
+  .hero-content{padding:120px 24px 80px}
+  .hero-content img.patch{width:min(300px,62vw);margin:0 auto 28px;filter:drop-shadow(0 12px 40px rgba(0,0,0,.8))}
+  header h1{font-size:clamp(1.9rem,5.4vw,3.6rem);font-weight:900;line-height:1.15}
+  header h1 .accent{color:var(--orange-bright)}
+  .tagline{margin-top:14px;color:var(--ash);font-size:clamp(.95rem,2.2vw,1.15rem);text-transform:uppercase;letter-spacing:.28em}
+  .motto{margin-top:26px;font-family:'Cinzel',serif;font-size:clamp(1.05rem,2.6vw,1.45rem);color:var(--gold);font-weight:700}
+  .hero-btns{margin-top:38px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:14px 34px;border-radius:3px;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.14em;transition:all .2s}
+  .btn-solid{background:var(--orange);color:#0b0c0e;font-weight:800}
+  .btn-solid:hover{background:var(--orange-bright);transform:translateY(-2px)}
+  .btn-ghost{border:1px solid var(--edge);color:var(--bone)}
+  .btn-ghost:hover{border-color:var(--bone)}
+  .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--ash);font-size:1.4rem;animation:bob 2s infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+
+  /* ===== SECTIONS ===== */
+  section{padding:90px 0}
+  .kicker{color:var(--orange-bright);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.3em;margin-bottom:12px}
+  h2{font-size:clamp(1.6rem,3.6vw,2.4rem);font-weight:700;margin-bottom:22px}
+  .rule{width:64px;height:3px;background:var(--orange);margin:0 0 28px}
+  .center .rule{margin:0 auto 28px}
+  .center{text-align:center}
+  p.lead{color:var(--ash);font-size:1.05rem;max-width:760px}
+  .center p.lead{margin:0 auto}
+
+  /* credo cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px;margin-top:48px}
+  .card{background:var(--iron);border:1px solid var(--edge);border-top:3px solid var(--orange);padding:34px 28px;border-radius:4px}
+  .card .glyph{font-size:1.9rem;margin-bottom:14px}
+  .card h3{font-size:1.05rem;margin-bottom:10px;color:var(--bone)}
+  .card p{color:var(--ash);font-size:.93rem}
+
+  /* who we are */
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+  @media(max-width:820px){.split{grid-template-columns:1fr}}
+  .split img{border-radius:6px;border:1px solid var(--edge)}
+  .split .veg{background:#000;padding:40px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--edge)}
+  .split .veg img{width:min(280px,70%);border:none}
+  blockquote{border-left:3px solid var(--gold);padding-left:20px;margin:24px 0;color:var(--bone);font-style:italic}
+
+  /* valhalla */
+  .valhalla{background:linear-gradient(180deg,var(--black),var(--iron) 30%,var(--iron) 70%,var(--black))}
+  .mem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;margin-top:48px}
+  .mem{position:relative;border-radius:4px;overflow:hidden;border:1px solid var(--edge);background:var(--steel)}
+  .mem img{height:300px;width:100%;object-fit:cover;object-position:top center;filter:grayscale(35%);transition:filter .3s,transform .3s}
+  .mem:hover img{filter:grayscale(0);transform:scale(1.03)}
+  .mem .label{position:absolute;bottom:0;left:0;right:0;padding:36px 16px 14px;background:linear-gradient(transparent,rgba(11,12,14,.95) 60%)}
+  .mem .label h3{font-size:1.05rem}
+  .mem .label span{color:var(--gold);font-size:.8rem;letter-spacing:.15em}
+
+  /* locations */
+  .loc-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;margin-top:48px}
+  .stat{background:var(--iron);border:1px solid var(--edge);border-radius:4px;padding:30px 20px;text-align:center}
+  .stat .num{font-family:'Cinzel',serif;font-size:2.2rem;font-weight:900;color:var(--orange-bright)}
+  .stat .lbl{color:var(--ash);font-size:.8rem;text-transform:uppercase;letter-spacing:.18em;margin-top:6px}
+  .map-placeholder{margin-top:40px;border:1px dashed var(--edge);border-radius:6px;padding:70px 24px;text-align:center;color:var(--ash);background:var(--iron)}
+
+  /* store */
+  .store-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin-top:48px}
+  .product{background:var(--iron);border:1px solid var(--edge);border-radius:4px;overflow:hidden;transition:border-color .2s}
+  .product:hover{border-color:var(--orange)}
+  .product .ph{height:190px;background:var(--steel);display:flex;align-items:center;justify-content:center;font-size:2.6rem}
+  .product .info{padding:18px 18px 22px}
+  .product h3{font-size:.98rem;margin-bottom:6px}
+  .product .price{color:var(--gold);font-weight:700;font-size:.95rem}
+
+  /* join */
+  .join{background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,111,3,.14), transparent 60%),
+    var(--iron)}
+  .join-box{max-width:640px;margin:48px auto 0;background:var(--black);border:1px solid var(--edge);border-radius:6px;padding:40px}
+  .join-box label{display:block;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--ash);margin:18px 0 6px}
+  .join-box input,.join-box select,.join-box textarea{width:100%;background:var(--steel);border:1px solid var(--edge);border-radius:3px;padding:12px 14px;color:var(--bone);font-family:inherit;font-size:.95rem}
+  .join-box input:focus,.join-box select:focus,.join-box textarea:focus{outline:none;border-color:var(--orange)}
+  .join-box button{margin-top:28px;width:100%;cursor:pointer;border:none}
+  .req-note{margin-top:20px;color:var(--ash);font-size:.85rem;text-align:center}
+
+  /* footer */
+  footer{border-top:1px solid var(--edge);padding:54px 0 36px;background:var(--black)}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px}
+  @media(max-width:720px){.foot-grid{grid-template-columns:1fr}}
+  footer h4{font-family:'Cinzel',serif;font-size:.95rem;margin-bottom:14px;color:var(--bone)}
+  footer a,footer p{color:var(--ash);font-size:.9rem}
+  footer li{list-style:none;margin-bottom:9px}
+  footer a:hover{color:var(--bone)}
+  .copyright{margin-top:44px;padding-top:22px;border-top:1px solid var(--edge);text-align:center;color:var(--ash);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <img src="https://ironvikingsmc.com/wp-content/uploads/2023/04/cropped-IVMC_Patch_Front-1-270x270.png" alt="IVMC patch">
+      <span>IRON <em>VIKINGS</em> MC</span>
+    </a>
+    <button class="burger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="#credo">Credo</a>
+      <a href="#who">Who We Are</a>
+      <a href="#valhalla">Valhalla</a>
+      <a href="#locations">Clans</a>
+      <a href="#community">Community</a>
+      <a href="#store">Store</a>
+      <a href="#login">Members</a>
+      <a href="#join" class="cta">Join Us</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="hero-content">
+    <img class="patch" src="https://ironvikingsmc.com/wp-content/uploads/2025/02/IVMC_BackPatch_275.webp" alt="Iron Vikings MC back patch">
+    <h1>AN INTERNATIONAL <span class="accent">BROTHERHOOD</span></h1>
+    <p class="tagline">Law-Abiding • Three-Piece • Worldwide</p>
+    <p class="motto">“We respect ALL and fear NONE.”</p>
+    <div class="hero-btns">
+      <a class="btn btn-solid" href="#join">Join the Brotherhood</a>
+      <a class="btn btn-ghost" href="#who">Learn Our Story</a>
+    </div>
+  </div>
+  <div class="scroll-hint">▾</div>
+</header>
+
+<section id="credo">
+  <div class="wrap center">
+    <p class="kicker">Our Credo</p>
+    <h2>Bound by an Ironclad Code</h2>
+    <div class="rule"></div>
+    <p class="lead">We are a law-abiding international three-piece motorcycle club — a global, united front with Clans scattered across the world, all bound by the same ironclad code observed by every Member. We stand shoulder-to-shoulder with the Alliance of Law Abiding clubs.</p>
+    <div class="cards">
+      <div class="card"><div class="glyph">⚔️</div><h3>Loyalty &amp; Honor</h3><p>A brotherhood built on loyalty, honor, and the roar of the open highway. Respect is a core principle that extends to everyone.</p></div>
+      <div class="card"><div class="glyph">🛡️</div><h3>Law-Abiding</h3><p>We exist within the law and uphold it. We believe in the rights guaranteed by the constitution and the freedom to assemble and forge our own path.</p></div>
+      <div class="card"><div class="glyph">🔥</div><h3>Forged in Fire</h3><p>We welcome active military, veterans, everyday heroes from law enforcement and EMS, and riders from all walks of life in between.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="who" style="padding-top:0">
+  <div class="wrap split">
+    <div>
+      <p class="kicker">Who We Are</p>
+      <h2>More Than a Motorcycle Club</h2>
+      <div class="rule"></div>
+      <p class="lead" style="max-width:none">We exist because we believe in the ironclad rights guaranteed by the constitution and the freedom to assemble and forge our own path without the permission of any other entity.</p>
+      <blockquote>In the Iron Vikings MC, respect is a core principle that extends to everyone. Fear? We leave that for the weak.</blockquote>
+      <p class="lead" style="max-width:none">The IVMC is more than a motorcycle club — it is a brotherhood built on loyalty, honor, and the roar of the open highway.</p>
+    </div>
+    <div class="veg">
+      <img src="https://ironvikingsmc.com/wp-content/uploads/2024/07/vegvisir.webp" alt="Vegvisir symbol">
+    </div>
+  </div>
+</section>
+
+<section id="valhalla" class="valhalla">
+  <div class="wrap center">
+    <p class="kicker">Valhalla</p>
+    <h2>In Memory of Our Fallen Brothers</h2>
+    <div class="rule"></div>
+    <p class="lead">Within the hallowed halls of Valhalla, their valor echoes eternally.</p>
+    <div class="mem-grid">
+      <a class="mem" href="https://ironvikingsmc.com/memorial/3-way/">
+        <img src="https://ironvikingsmc.com/wp-content/uploads/2025/06/FB_IMG_1694275876921-554x1024.jpg" alt="3-Way">
+        <div class="label"><h3>3-Way</h3><span>EST. ETERNAL • 2023</span></div>
+      </a>
+      <a class="mem" href="https://ironvikingsmc.com/memorial/bootlegger/">
+        <img src="https://ironvikingsmc.com/wp-content/uploads/2025/06/81519417_1721349434673967_r.webp" alt="Bootlegger">
+        <div class="label"><h3>Bootlegger</h3><span>EST. ETERNAL • 2024</span></div>
+      </a>
+      <a class="mem" href="https://ironvikingsmc.com/memorial/bebop/">
+        <img src="https://ironvikingsmc.com/wp-content/uploads/2025/12/600369422_122119021569012061_7759354427174065032_n.jpg" alt="BeBop">
+        <div class="label"><h3>BeBop</h3><span>EST. ETERNAL • 2025</span></div>
+      </a>
+      <a class="mem" href="https://ironvikingsmc.com/memorial/digger/">
+        <img src="https://ironvikingsmc.com/wp-content/uploads/2025/10/556869961_810683188081307_8820839116509206275_n-588x1024.jpg" alt="Digger">
+        <div class="label"><h3>Digger</h3><span>EST. ETERNAL • 2025</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="locations">
+  <div class="wrap center">
+    <p class="kicker">Our Clans</p>
+    <h2>A Global, United Front</h2>
+    <div class="rule"></div>
+    <p class="lead">Clans scattered across the world, all observing a single manifesto.</p>
+    <div class="loc-band">
+      <div class="stat"><div class="num">XX</div><div class="lbl">Clans</div></div>
+      <div class="stat"><div class="num">XX</div><div class="lbl">States</div></div>
+      <div class="stat"><div class="num">XX</div><div class="lbl">Countries</div></div>
+      <div class="stat"><div class="num">1</div><div class="lbl">Brotherhood</div></div>
+    </div>
+    <div class="map-placeholder">
+      🗺️ Interactive clan map goes here — same data as the current map, embedded so it loads fast and never breaks the page.
+    </div>
+  </div>
+</section>
+
+<section id="community" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">Charity &amp; Community</p>
+    <h2>We Ride for More Than Ourselves</h2>
+    <div class="rule"></div>
+    <p class="lead">Roughly 80% of our time and resources go to charitable, educational, and community support activities — benefit rides for families in crisis, motorcycle safety training, food drives, emergency assistance, and wellness checks, year-round.</p>
+    <div class="cards">
+      <div class="card"><div class="glyph">🏍️</div><h3>Benefit Rides</h3><p>Major fundraising and ride events scheduled quarterly, supporting families in crisis and local causes.</p></div>
+      <div class="card"><div class="glyph">🎓</div><h3>Safety &amp; Education</h3><p>Workshops on motorcycle laws and rider safety, held at least twice annually — in person and online.</p></div>
+      <div class="card"><div class="glyph">🤝</div><h3>Community Support</h3><p>Food drives, emergency assistance, and wellness checks for members, families, and neighbors.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="store" class="valhalla">
+  <div class="wrap center">
+    <p class="kicker">Support Gear</p>
+    <h2>IVMC Store</h2>
+    <div class="rule"></div>
+    <p class="lead">Wear your support. Official IVMC supporter merchandise — placeholders below until we wire up the real products.</p>
+    <div class="store-grid">
+      <div class="product"><div class="ph">🧢</div><div class="info"><h3>Supporter Cap</h3><div class="price">$25</div></div></div>
+      <div class="product"><div class="ph">👕</div><div class="info"><h3>Supporter Tee</h3><div class="price">$30</div></div></div>
+      <div class="product"><div class="ph">🧥</div><div class="info"><h3>Hoodie</h3><div class="price">$55</div></div></div>
+      <div class="product"><div class="ph">🏴</div><div class="info"><h3>Support Flag</h3><div class="price">$20</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="join" class="join">
+  <div class="wrap center">
+    <p class="kicker">Join the Brotherhood</p>
+    <h2>Forge Your Own Path. Ride With Us.</h2>
+    <div class="rule"></div>
+    <p class="lead">We are a traditional MC: you must own — or be in the process of owning — a motorcycle, with a valid motorcycle license. Leave your information and we will be in touch promptly.</p>
+    <form class="join-box" onsubmit="event.preventDefault();alert('This is a design mockup — the live version will send your message to the club.')">
+      <label>Name *</label><input required placeholder="Your name">
+      <label>Email *</label><input required type="email" placeholder="you@example.com">
+      <label>Phone</label><input type="tel" placeholder="(555) 555-5555">
+      <label>How did you hear about us? *</label>
+      <select required><option value="">Select an option</option><option>Google Search</option><option>Social Media</option><option>Friend or Family</option><option>Event or Ride</option><option>Club Member</option><option>Other</option></select>
+      <label>Location (Country / State) *</label><input required placeholder="USA / Delaware">
+      <label>Message *</label><textarea required rows="4" maxlength="180" placeholder="Tell us a little about yourself and your ride"></textarea>
+      <button class="btn btn-solid" type="submit">Send Message</button>
+      <p class="req-note">Protected against spam. We respond to every serious inquiry.</p>
+    </form>
+  </div>
+</section>
+
+<footer id="login">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>IRON VIKINGS MC</h4>
+        <p>A law-abiding international three-piece motorcycle club. Member of the Alliance of Law Abiding clubs.</p>
+        <p style="margin-top:12px;color:var(--gold);font-family:'Cinzel',serif">Respect ALL. Fear NONE.</p>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <ul>
+          <li><a href="#credo">Our Credo</a></li>
+          <li><a href="#valhalla">Valhalla</a></li>
+          <li><a href="#locations">Clan Locations</a></li>
+          <li><a href="#community">Charity &amp; Community</a></li>
+          <li><a href="#store">Store</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Members &amp; Partners</h4>
+        <ul>
+          <li><a href="https://ironvikingsmc.com/login">Member Login</a></li>
+          <li><a href="https://www.allianceofmcs.com/">Alliance of MCs</a></li>
+          <li><a href="https://www.vikingbags.com/pages/motorcycle-harley-davidson-saddlebags">Viking Bags</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">IRON VIKINGS MC — ALL RIGHTS RESERVED © 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>
