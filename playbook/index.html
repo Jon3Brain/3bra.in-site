@@ -27,4 +27,106 @@
 
     <p class="dim"><em>Identifiers scrubbed: stand-in subnets and hostnames throughout. All log excerpts are real entries with identifiers substituted.</em></p>
 
-    <p>Every infrastructure forum right now has the same argument: can you trust an AI agent with production systems? The arguments are loud and the evidence is thin. Almost nobody arg
+    <p>Every infrastructure forum right now has the same argument: can you trust an AI agent with production systems? The arguments are loud and the evidence is thin. Almost nobody arguing has actually handed an agent the keys and kept the receipts.</p>
+
+    <p>I did. For the past weeks, an AI agent has run a scheduled, autonomous daily review of my network — diagnosing, fixing what's safe, escalating what isn't, and logging every action with a tested rollback. This is the regime that made it safe, the paper trail it produced, and the templates so you can run the same experiment yourself.</p>
+
+    <p>I'm not an AI vendor. I'm an infrastructure engineer — 30 years, NT 4.0 to Azure. What follows is an operations document, not a hype document.</p>
+
+    <h2>The environment</h2>
+
+    <p>A lab with production discipline. Eight hosts behind an OPNsense firewall with five VLAN segments (the lab on its own segment, <code>192.168.100.0/24</code>; home, IoT, guest, and VPN kept strictly separate):</p>
+
+    <ul>
+      <li><strong>agent01</strong> — Docker host: ~20 containers of market-data agents plus a local LLM (ollama). The "business logic" of this network.</li>
+      <li><strong>db01</strong> — PostgreSQL 16 + TimescaleDB. Hundreds of gigabytes of time-series market data, ingesting ~600k rows/hour.</li>
+      <li><strong>mon01</strong> — Prometheus + Grafana + node_exporter.</li>
+      <li><strong>collect01–04</strong> — four Raspberry Pi data collectors feeding the database.</li>
+      <li><strong>nas01</strong> — Unraid NAS: report store, changelog, versioned backups.</li>
+      <li><strong>fw01</strong> — the firewall. Mentioned only to say: the agent never touches it.</li>
+    </ul>
+
+    <p>Real workloads, real data, real consequences — a dead database here isn't a simulated failure. But it's my lab, so the blast radius of any mistake is mine alone. That's the right place to develop an operating regime, and the regime is the part that transfers to any environment.</p>
+
+    <h2>The trust boundary comes first</h2>
+
+    <p>Before the agent ever connected, the limits were written down. Not vibes — a list:</p>
+
+    <ol>
+      <li><strong>Never touch the business logic.</strong> Here that means trading agents and risk parameters. In your shop it might be the order pipeline or the billing system. The agent operates the <em>infrastructure surface</em>, never the <em>business surface</em>.</li>
+      <li><strong>Never touch the firewall.</strong> The security perimeter is not an operations target.</li>
+      <li><strong>Never touch data or schema.</strong> No deletes, no retention changes, no ALTERs on its own authority. Disk pressure caused by data is <em>reported</em>, not "solved."</li>
+      <li><strong>No reboots, no stateful service restarts.</strong> Nothing that drops state gets done unattended.</li>
+      <li><strong>One reversible change per day, maximum.</strong> Anything bigger waits for a human-attended window.</li>
+    </ol>
+
+    <p>Access matches the boundary: SSH with scoped credentials, and kill-switches by design — tokens that get disabled between change windows, one host that is never automated at all. The agent doesn't have the <em>ability</em> to be told "also just quickly fix the firewall"; the conversation can't go there because the access doesn't.</p>
+
+    <p>The principle behind all five rules: <strong>the agent earns autonomy on the surfaces where mistakes are reversible, and has none where they aren't.</strong></p>
+
+    <h2>The change discipline</h2>
+
+    <p>Every change the agent makes follows the same shape, and the shape is older than AI — it's just change management, enforced without exception:</p>
+
+    <p><strong>Snapshot → apply → verify → log, with a tested rollback command.</strong></p>
+
+    <p>The log is a CHANGELOG on the NAS, newest first, one entry per day. Each entry records what changed, why, where the pre-change snapshot lives, the exact rollback command, and what verification was run. A real entry, condensed:</p>
+
+    <blockquote>
+      <p><strong>Repaired postgres_exporter on db01.</strong> Exporter reported pg_up=0 (never connected — two pre-existing misconfigs: DSN pointed at a nonexistent role, no pg_hba rule for the Docker bridge). Fix: created dedicated least-privilege role (LOGIN + pg_monitor, no write), added the pg_hba rule, reloaded (no restart), repointed the exporter. <strong>Snapshot:</strong> pg_hba.conf.bak-pre-exporter. <strong>Rollback:</strong> restore backup + reload; DROP ROLE. <strong>Verification:</strong> pg_up=1, metrics flowing, alert cleared.</p>
+    </blockquote>
+
+    <p>And the rule that surprises people most: <strong>on a healthy day, the agent does nothing — and logs that it did nothing.</strong> A week of my changelog reads "No change applied (system healthy)... no worthwhile safe change, so none was manufactured." Each of those entries still represents a full verification pass: every host, container, service, alert rule, scrape target, and yesterday's fixes re-checked.</p>
+
+    <p>This rule exists because an agent (or a junior engineer) required to produce visible work every day will eventually invent some. An idle hand looking for something to do on a production system is how healthy systems get broken. "Nothing needed doing, and here's the verification that proves it" is a <em>result</em>.</p>
+
+    <h2>The escalation lanes</h2>
+
+    <p>Autonomy needs somewhere to put the things it's not allowed to do. Two files:</p>
+
+    <p><strong>BACKLOG.md</strong> — a ranked improvement list. Anything touching data, backups, or requiring a restart lands here with a priority and waits for a human decision. Items are never silently dropped; they're marked DONE or DROPPED with a date.</p>
+
+    <p><strong>IDEAS.md</strong> — a research ledger with a stricter contract: research <em>proposes</em>, the human accepts or rejects, and only accepted items graduate to the backlog. Rejected ideas are never re-pitched without materially new evidence. (An agent that keeps re-suggesting the thing you said no to is a nag, not an operator.)</p>
+
+    <p>Here's the boundary working in practice. The database's root disk was growing 4.5 GB/day and crossed 68%. The agent's response was <em>not</em> to free space — data is behind the guardrail. It attributed the growth to the specific database, computed the time-to-80% (~2 weeks), and escalated with options. I chose TimescaleDB compression over pruning — keep all history, lose the bloat — and we applied it together in an attended session: test chunk first to measure the ratio, then the rest, policy automated after.</p>
+
+    <p><strong>Result: a 207 GB table became 37 GB (96.6–97.3% per chunk). The database went from 212 GB to 45 GB; root disk from 68% to 29%; steady-state growth from ~32 GB/week to ~1 GB/week.</strong> Pre-change snapshot preserved, per-chunk rollback documented (including the honest note that a full rollback needs ~170 GB free), ingest verified flowing within minutes — and the agent independently re-verified the change was holding on each of the next days' runs.</p>
+
+    <h2>What actually happened: the log as evidence</h2>
+
+    <p><strong>The monitoring that monitored nothing.</strong> Early on, the agent found Prometheus collecting metrics but evaluating <em>zero alert rules</em> — a monitoring stack that would never alert on anything. It built a minimal ruleset (instance down, exporter unreachable, disk, memory), validated it with promtool, and hot-reloaded it. The new rules immediately surfaced a real, pre-existing failure: the Postgres exporter had never successfully connected. The agent fixed that too — with a new least-privilege monitoring role, not a password in an environment variable. Alerts since: zero false positives.</p>
+
+    <p><strong>The fault it refused to fix.</strong> One day the review found all five Reddit sentiment feeds returning HTTP 403 — dead for 31 hours. The agent diagnosed precisely: the collector was alive and polling on schedule; the <em>source</em> was rejecting requests. Then it did the most important thing in this whole story: it concluded that the obvious mechanical fix — restart the collector — <strong>would not help and was correctly not attempted</strong>, because server-side rejection isn't cured by client-side restarts. API credentials are the operator's call. It filed the item, ranked it, and moved on. An agent that knows <em>why</em> a fix won't work, and whose fix it isn't, is displaying the judgment everyone claims agents don't have.</p>
+
+    <p><strong>The self-critique.</strong> That same 31-hour outage went unnoticed because alert paging isn't wired up yet — and the agent named its own gap: the backlog entry for alert paging now reads "today's 31h-unnoticed feed outage is exhibit A." The system argues for its own improvement with evidence from its own failures.</p>
+
+    <p><strong>The collision.</strong> Full honesty: there's one failed job in the log. The morning we applied compression manually, the new automatic compression policy fired its first run on the same chunks and hit locks. It failed, retried on schedule, succeeded, and never failed again. Lesson recorded: when humans and agents share a system, schedule around each other's work. That's not an AI lesson; that's a two-engineers-one-server lesson, and it transfers unchanged.</p>
+
+    <p><strong>The boring excellence.</strong> Most entries are dull, and the dullness is the point: per-host verification tables, week-over-week trend deltas, "watch items" from yesterday explicitly re-checked and closed out, temp diagnostic scripts uploaded, run, and <em>verified removed</em>. The agent even reports on its own observer overhead (its monitoring container is heavier than any business container — known, measured, noted).</p>
+
+    <h2>Scheduled autonomy, not reactive autonomy</h2>
+
+    <p>The agent runs on a cadence: a daily post-market review (read-only diagnosis plus at most one safe fix), a weekly deep-dive (full backlog re-rank, module audits), and a weekly research run that can propose but never touch. Cadence beats reactivity for the same reason rounds beat firefighting: the daily pass catches drift while it's still a trend line instead of an outage, and the schedule itself is a guardrail — nobody is tempted to let the agent "just stay on" all day.</p>
+
+    <h2>Steal this</h2>
+
+    <p>The <a href="https://github.com/Jon3Brain/agent-ops">companion repo</a> contains the scrubbed, generalized versions of everything: the guardrail document, the CHANGELOG/BACKLOG/IDEAS templates with their rules, and the daily-review instructions themselves. Adapting it to your environment starts with one question: <strong>what's your "trading logic"</strong> — the surface the agent must never touch? Answer that, write it down, and the rest is mechanical.</p>
+
+    <h2>What I'd tell another infrastructure engineer</h2>
+
+    <p>The skill that makes this safe isn't prompting. It's the same discipline you already have: change windows, snapshots, rollback plans, verification before victory laps. If you've ever planned a three-day downtime window with the third day reserved for validation, you already know how to run an AI agent. The agent is a tireless, fast, occasionally brilliant junior engineer with no ego about boring work — it will do the full verification pass every single day without getting sloppy on day six, which is more than I can say for any human including me.</p>
+
+    <p>What stays human: anything irreversible, anything touching data, anything that spends money, and every accept/reject decision on the ideas it generates. What surprised me: the quality of <em>restraint</em> — the days of "no change needed," the refusal to restart a collector that wasn't broken. We worry about agents doing too much; a well-run regime produces an agent whose most common action is a verified nothing.</p>
+
+    <p>Trust isn't a feeling you have about a model. It's a structure you build around one. Build the structure, keep the receipts, and the argument settles itself.</p>
+
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    Jonathan Yuan · <a href="https://github.com/Jon3Brain/agent-ops">agent-ops on GitHub</a> · static site, no CMS, no tracking
+  </div>
+</footer>
+</body>
+</html>
