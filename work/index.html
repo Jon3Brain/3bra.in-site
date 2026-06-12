@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Work — Jonathan Yuan</title>
-<meta name="description" content="Thirty years of infrastructure work, from Windows 3.1 to Azure to supervised autonomous AI operations.">
+<meta name="description" content="Thirty years of infrastructure work: the stories, the ledger, and the things built outside the racks. Every claim traces to a source.">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="icon" type="image/png" href="/assets/favicon-48.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -23,16 +23,87 @@
 <main class="wrap">
   <article>
     <h1>Work</h1>
-    <p class="byline">Jonathan Yuan</p>
+    <p class="byline">Jonathan Yuan · thirty years of the same shape</p>
 
-    <!-- CONTENT PENDING: derived from track-a-inventory/cv-of-work.md.
-         Photo assets: "no floor Jetta.JPG" (R32 wagon build, 2008),
-         "tree of memories.jpg" (Burning Man 2002) — copy into /assets/. -->
-    <p class="dim">[ portfolio entries go here — derived from cv-of-work.md ]</p>
+    <p>Walk into a system nobody understands. Make it visible. Stage the risk. Fix it. Verify. Leave it documented. The problem changes — servers, codebases, network links between countries, a gutted car on jack stands, an AI agent on production infrastructure — but the method doesn't. Every claim below traces to a source: a changelog, a photo, a magazine, or the people who were there.</p>
+
+    <h2>The company on one hard drive <span class="year">2014</span></h2>
+
+    <p>A 7.5-year-old fiber-channel SAN was visibly dying; budget culture said "it's working, therefore it's fine." After forcing the first two-drive RAID5 failure back to life, I spent my own ~$200/month budget on a single SATA drive and quietly built one-way DFS replication of all company data onto it. When the SAN died for good — no spare parts left in existence — the entire company kept working from that one drive for well over a month. The CFO got the message standing at my desk: "You do realize the ENTIRE company's data is on this one hard drive right here?" Budget for a proper replacement followed.</p>
+
+    <h2>The cabinet nobody would touch <span class="year">2014</span></h2>
+
+    <p>The entire company ran from one 42U cabinet — servers, fiber-channel switch, core switch, ~80% full — cabled so badly that staff stepped <em>on</em> wires to reach the back. Nobody dared touch it. I proposed and won a three-day full-downtime holiday window, unplugged everything — every power, network, and fiber run — and rebuilt it cleanly in two days, reserving day three for validation. Everything came back.</p>
+
+    <h2>The two-line fix for a years-old problem <span class="year">≈2010</span></h2>
+
+    <p>Navision label printing had been unreliable for <em>years</em> — the application could only print to COM/LPT ports mapped to network locations, and the mappings constantly broke, surfacing weekly across a ~50-customer base. I had deliberately never touched Navision (the rest of the team did Navision; I did everything else), so I had a colleague teach me enough to find the print routine. Root causes, in the code: an 8-character printer-path field, and a shell call using <code>TYPE</code> to dump text to a COM port. I proved the fix with 8-character UNC paths (<code>\\c\pnt</code>), then changed <code>TYPE</code> to <code>COPY</code> and widened the field to 60 characters. A years-old, business-critical problem ended with a two-line change.</p>
+
+    <h2>The 4 Mbps mystery <span class="year">2016</span></h2>
+
+    <p>VoIP was unusable; the complaint was "the internet is slow." Diagnosis found a bad traffic-shaping pattern on a WiFi access point capping the entire office below 4 Mbps — plus an ISP quietly dropping packets. Restored to the rated 200 Mbps.</p>
+
+    <h2>The slow line to Mexico <span class="year">2013</span></h2>
+
+    <p>Hired off a one-off paid gig — document the network — at a four-site manufacturer, three sites in Mexico. The documentation was alarming enough that they kept me. The famous "slowness" between Mexico and Minnesota fell to monitoring and NetFlow on the Cisco fleet: the line was saturated for hours at a time, and follow-up analysis named the traffic responsible. Then the real work: spoke-and-hub became full mesh, with DHCP/DNS/LDAP resilient by site and cross-site failover. Design goal, achieved: a site could burn to the ground with zero data loss and zero downtime for everyone else.</p>
+
+    <h2>A datacenter in carry-on luggage <span class="year">≈2009</span></h2>
+
+    <p>Sales needed to demo a complete, functional Navision network at customer sites — years before Azure or AWS made that trivial. I built a ~14-inch-tall travel case holding four 1U servers plus network gear: domain controller, database, clients, label printer, WiFi for the presenter's laptop. One cable into any internet connection and the entire environment came up. A 42U cabinet's worth of function in carry-on form.</p>
+
+    <h2>The AI agent on production <span class="year">2026</span></h2>
+
+    <p>Since June 2026, an AI agent has run scheduled autonomous daily reviews of my production lab network under a written guardrail regime — every change snapshotted, verified, and logged with a tested rollback. First-week results include a 207 GB table compressed to 37 GB live with approval, and a monitoring stack that went from zero alert rules to a validated ruleset that immediately caught a real pre-existing failure. The full regime, paper trail, and templates: <a href="/playbook/">the playbook</a>.</p>
+
+    <h2>The ledger</h2>
+
+    <ul class="roles">
+      <li><span class="org">Daikin Applied</span> — Sr. IT Infrastructure <span class="when">2022–present</span><br>Enterprise monitoring and service-visibility work.</li>
+      <li><span class="org">KGP Co</span> — Senior Network Engineer <span class="when">2019–2022</span><br>Initiated the company's Azure presence from scratch; built SCCM/MECM with Intune co-management for ~4,500 employees across 65+ locations in multiple countries.</li>
+      <li><span class="org">WhizKids (MSP)</span> — Network Engineer, Tier 3 <span class="when">2018–2019</span><br>One of two Tier 3 engineers serving dozens of client companies daily; designed the helpdesk ticket flow and the technical vetting routine for engineering hires.</li>
+      <li><span class="org">Freelance</span> <span class="when">2017–2018</span><br>Migrated a small business from on-prem Windows 2012 R2 + Exchange 2013 to fully server-free Office 365, then removed the physical server entirely.</li>
+      <li><span class="org">Stoneridge Software</span> — IT Manager <span class="when">2015–2017</span><br>Sole infrastructure owner for an 86-user Microsoft Gold Partner: six physical hosts, ~35 Hyper-V guests, a 40+ VM Azure test/dev library, and a ground-up re-architecture of addressing, firewalls, VPN, and monitoring across two locations.</li>
+      <li><span class="org">Thermotech Inc</span> — Senior Network Admin III <span class="when">2013–2015</span><br>Four sites in two countries; full-mesh redesign with per-site resilience (see stories above).</li>
+      <li><span class="org">Symbiant Technologies</span> — Network Administrator <span class="when">1997–2013</span><br>Sixteen years of full-lifecycle ownership for ~50 SMB customers — scope, quote, build, deploy, support — across the NT 4.0 to Server 2012 era. Exchange database surgery with ESEUtil included.</li>
+    </ul>
+
+    <blockquote>
+      <p>"Deployments were falling behind growth. Jon righted the ship from vendor sourcing to a full re-architecture of our internal network and systems."<br>— Warren, NAV Director, 2015</p>
+    </blockquote>
+
+    <h2>Beyond the racks</h2>
+
+    <p><strong>The R32 wagon.</strong> I wanted a VW R32's drivetrain with four doors for a growing family. I'd never done an engine swap — so first I ran a deliberate go/no-go pilot, swapping a junkyard engine into another car in one weekend. It worked; project approved. Then I gutted a perfectly good Jetta wagon to the bare shell — wiring harness and all, rear floor pan cut out entirely — and rebuilt it with 100% R32 running gear. More a chassis swap than a drivetrain swap. It won show trophies and was featured in <em>Performance VW</em>, May 2011.</p>
+
+    <figure>
+      <img src="/assets/r32-wagon.webp" width="1100" height="618" alt="A Jetta wagon on jack stands, stripped to a bare shell with the rear floor cut out, garage floor visible through the car." loading="lazy">
+      <figcaption>2008. No floor. The method holds: stage the risk first.</figcaption>
+    </figure>
+
+    <p><strong>Tree of Memories, Burning Man 2002.</strong> After a rough year, I built an 8-foot tree from scrap wiring, every branch ending in a hook — designed to start barren and be completed by strangers hanging memories on it. It filled.</p>
+
+    <figure>
+      <img src="/assets/tree-of-memories.webp" width="1100" height="772" alt="An eight-foot tree sculpture made of scrap wire at Burning Man, its branches hung with objects left by strangers." loading="lazy">
+      <figcaption>It filled.</figcaption>
+    </figure>
+
+    <blockquote>
+      <p>"Able to build a car from a manual and an idea, install a server farm on his desk and ship it across the country and have it work on the other side, create amazing art from the everyday… an all-around Mr. Wizard."<br>— reference, 2015</p>
+    </blockquote>
+
+    <h2>Skills, era-spanning</h2>
+
+    <p>Windows Server NT 4.0→2022 · Active Directory/GPO design (25+ yrs) · Exchange 5.5→2016 + O365 · Azure (built two corporate environments from scratch) · Hyper-V/SCVMM, VMware · SCCM/MECM + Intune · SQL Server 6.5→2016 · OPNsense/PF Sense, VLANs, WireGuard, Cisco/NetFlow · PRTG, Prometheus/Grafana, PagerDuty · PostgreSQL/TimescaleDB · Docker · Linux · backup/DR (Backup Exec, DPM, StorageCraft) · ITSM process design · AI-agent supervision: guardrail design, change-control regimes, CHANGELOG/BACKLOG discipline.</p>
+
+    <p class="dim">Certifications: MCSE (NT 4.0, 2003, 2008), MCSA SQL 2008. Post-2008: none — by choice. The evidence above is the credential.</p>
 
   </article>
 </main>
 
 <footer>
   <div class="wrap">
-    Jonathan Yuan · <a href="https://gi
+    Jonathan Yuan · <a href="https://github.com/Jon3Brain/agent-ops">agent-ops on GitHub</a> · static site, no CMS, no tracking
+  </div>
+</footer>
+</body>
+</html>
