@@ -1,0 +1,177 @@
+/* 3bra.in — ops console. No frameworks, no webfonts, no tracking. */
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text-bright: #e6edf3;
+  --text-dim: #8b949e;
+  --green: #3fb950;
+  --mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+header .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+.site-name { color: var(--text-bright); text-decoration: none; }
+.site-name span { color: var(--text-dim); }
+nav a {
+  color: var(--text-dim);
+  text-decoration: none;
+  margin-left: 18px;
+}
+nav a:hover, nav a[aria-current="page"] { color: var(--green); }
+
+/* Content */
+main { padding: 56px 0 64px; }
+
+h1 {
+  color: var(--text-bright);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0 0 14px;
+}
+h2 {
+  color: var(--text-bright);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 44px 0 12px;
+}
+a { color: var(--green); }
+.dim { color: var(--text-dim); }
+
+.status {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--green);
+  margin: 0 0 16px;
+}
+
+/* Evidence cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 36px 0 0;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.card .label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+.card .value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 4px 0 0;
+}
+
+/* Post card / panels */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin: 28px 0 0;
+}
+.panel .kicker {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--green);
+  margin: 0 0 6px;
+}
+.panel h3 { margin: 0; font-size: 18px; }
+.panel h3 a { color: var(--text-bright); text-decoration: none; }
+.panel h3 a:hover { color: var(--green); }
+.panel p { margin: 8px 0 0; color: var(--text-dim); font-size: 15px; }
+
+/* Article pages */
+article p, article li { font-size: 16px; }
+article code {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+article pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+article pre code { background: none; border: none; padding: 0; }
+article blockquote {
+  margin: 1.5em 0;
+  padding: 0 0 0 16px;
+  border-left: 3px solid var(--green);
+  color: var(--text-dim);
+}
+article img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.byline {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 0 32px;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 0 32px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+footer a { color: var(--text-dim); }
+footer a:hover { color: var(--green); }
+
+@media (max-width: 540px) {
+  header .wrap { flex-direction: column; gap: 6px; }
+  nav a { margin: 0 18px 0 0; }
+  h1 { font-size: 24px; }
+}
