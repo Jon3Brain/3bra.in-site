@@ -5,50 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jonathan Yuan — 3bra.in</title>
 <meta name="description" content="Thirty years of walking into systems nobody understands — and leaving them visible, fixed, verified, and documented.">
-<link rel="stylesheet" href="/assets/style.css">
-<link rel="icon" type="image/png" href="/assets/favicon-48.png">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/favicon-48.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 </head>
-<body>
+<body class="home">
+<canvas class="neural" data-seed="7" data-density="1.25" data-dim="1" data-dof="0" aria-hidden="true"></canvas>
+<div class="veil left"></div>
+
 <header>
   <div class="wrap">
-    <a class="site-name" href="/">3bra.in <span>/ jonathan yuan</span></a>
-    <nav>
-      <a href="/playbook/">playbook</a>
-      <a href="/work/">work</a>
-    </nav>
+    <a class="site-name" href="index.html">3bra.in <span>/ jonathan yuan</span></a>
+    <nav><a href="playbook/index.html">playbook</a><a href="work/index.html">work</a></nav>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="hero">
-    <div class="lede">
-      <p class="status">&#9679; operator on duty</p>
-      <h1>It's not that you can't.<br>It's that you don't know how yet.</h1>
-      <p class="dim">A carpentry teacher told me that thirty years ago. It's still how I work:
-      walk into a system nobody understands, make it visible, stage the risk, fix it,
-      verify it, write it down.</p>
-    </div>
-    <div class="mark">
-      <img src="/assets/mark-640.webp" width="640" height="600" alt="Three brains wired together at a glowing center — more than one alone.">
-    </div>
+<div class="stage">
+<div class="panel">
+  <p class="eyebrow">N E U R A L &nbsp; O P E R A T O R</p>
+  <p class="status">&#9679; operator on duty</p>
+  <h1>It's not that you can't.<br>It's that you don't<br>know how yet.</h1>
+  <p class="sub">A carpentry teacher told me that thirty years ago. It's still how I work: walk into a system nobody understands, make it visible, stage the risk, fix it, verify it, write it down.</p>
+  <div class="metrics">
+    <span>OPERATOR &nbsp; <b>Jonathan Yuan</b></span><br>
+    <span>STACK &nbsp;&nbsp;&nbsp;&nbsp; <b>Windows 3.1 &rarr; Azure</b></span><br>
+    <span>RUNNING &nbsp;&nbsp; <b>AI agent ops &middot; guardrailed</b></span>
   </div>
+</div>
 
-  <div class="cards">
-    <div class="card">
-      <p class="label">years in ops</p>
-      <p class="value">30+</p>
-    </div>
-    <div class="card">
-      <p class="label">stack range</p>
-      <p class="value">Win 3.1 &rarr; Azure</p>
-    </div>
-    <div class="card">
-      <p class="label">now running</p>
-      <p class="value">AI agent ops</p>
-    </div>
-  </div>
+<a class="box nav-box b-nav1" href="playbook/index.html"><span class="v">&rarr; playbook</span></a>
+<a class="box nav-box b-nav2" href="work/index.html"><span class="v">&rarr; work</span></a>
 
-  <div class="panel">
-    <p class="kicker">&#9650; latest post</p>
-    <h
+<a class="box b1" href="work/index.html"><p class="k">experience</p><p class="v">30+ years in ops<small>Win 3.1 &rarr; Azure</small></p></a>
+<a class="box b2" href="playbook/index.html"><p class="k">now running</p><p class="v">AI agent ops<small>guardrailed &middot; reviewed daily</small></p></a>
+<a class="box live b3" href="playbook/index.html"><p class="k">latest post</p><p class="v">Agent on the network<small>read the playbook &rarr;</small></p></a>
+<a class="box b4" href="work/index.html"><p class="k">the record</p><p class="v">War stories &amp; work<small>see what I've fixed &rarr;</small></p></a>
+
+<div class="home-foot">3bra.in &middot; <a href="https://github.com/Jon3Brain/agent-ops">agent-ops on GitHub</a> &middot; static site, no CMS, no tracking</div>
+</div><!-- /stage -->
+<script src="assets/neural.js"></script>
+</body>
+</html>
