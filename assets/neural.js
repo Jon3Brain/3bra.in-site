@@ -1,7 +1,8 @@
 /* 3bra.in neural field — anchored somas (home) + depth-of-field field (content pages).
-   Home: each memory box hosts a soma integrated INTO its edge — dendrites drawn behind the
-   box, the soma cell-body drawn on a layer ABOVE the box so it straddles/attaches to the rim.
-   One soma pinned near "guardrailed"; a few faint ambient somas. Map capped to site max-width. */
+   Subtle activity: faint axon lines connect the somas; occasional pulses (~1 / 3s) ride
+   those exact lines, and a few travel off toward distant fading fibers.
+   Home somas: dendrites behind the box, cell-body on a top layer straddling the rim.
+   Map capped to site max-width. Respects prefers-reduced-motion. */
 (function(){
   function mb(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
     t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
@@ -13,6 +14,8 @@
         focusN=canvas.dataset.focus!=null?+canvas.dataset.focus:2,
         dof=canvas.dataset.dof!=null?+canvas.dataset.dof:1;
     var main=canvas.getContext('2d'), R, topC=null, topX=null;
+    var NODES=[], anim={raf:0,timer:0,pulses:[],tracks:[],buf:null,W:0,H:0,dpr:1};
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function paintNeurons(ctx,W,H,alpha,scMin,scMax,count,glow,somaList){
       function bouton(px,py){
@@ -61,8 +64,6 @@
       var ox=oc.getContext('2d'); ox.setTransform(dpr,0,0,dpr,0,0);
       return {oc:oc,ox:ox};
     }
-
-    /* ---- top layer for soma bodies (drawn ABOVE the boxes) ---- */
     function ensureTop(W,H,dpr){
       if(!topC){
         topC=document.createElement('canvas'); topC.setAttribute('aria-hidden','true');
@@ -72,8 +73,6 @@
       topC.width=W*dpr; topC.height=H*dpr; topX.setTransform(dpr,0,0,dpr,0,0); topX.clearRect(0,0,W,H);
       return topX;
     }
-
-    /* ---- anchored somas (home) ---- */
     function rimPoint(a,hw,hh,rr){
       var dx=Math.cos(a), dy=Math.sin(a);
       var tx=Math.abs(dx)<1e-6?1e9:hw/Math.abs(dx);
@@ -110,7 +109,6 @@
         for(var k=0;k<n;k++) aBranch(px,py,ang+(R()-0.5)*1.5,len*(0.6+R()*0.25),w*0.6,depth-1); }
       else aBouton(px,py);
     }
-    // halo + dendrites on the BACKGROUND canvas
     function somaMain(sx,sy,sc,outAng,spread){
       var g=main.createRadialGradient(sx,sy,0,sx,sy,30*sc);
       g.addColorStop(0,'rgba(150,190,235,'+(0.26*dim)+')');
@@ -123,7 +121,6 @@
         aBranch(sx+Math.cos(an)*6*sc, sy+Math.sin(an)*6*sc, an, (120+R()*95)*sc, 3.0*sc, 5);
       }
     }
-    // defined cell body on the TOP layer (sits on the box edge)
     function somaBody(sx,sy,sc){
       topX.shadowBlur=10*sc; topX.shadowColor='rgba(150,200,250,0.8)';
       var g=topX.createRadialGradient(sx,sy,0,sx,sy,11*sc);
@@ -135,7 +132,7 @@
       topX.beginPath(); topX.arc(sx,sy,2.6*sc,0,7); topX.fill();
     }
     function anchoredSomas(W,H,cr){
-      main.lineCap='round'; main.lineJoin='round';
+      NODES=[]; main.lineCap='round'; main.lineJoin='round';
       var cx=W*0.44, cy=H*0.52;
       var boxes=document.querySelectorAll('.box:not(.nav-box)');
       for(var i=0;i<boxes.length;i++){
@@ -146,23 +143,101 @@
         var baseAng=Math.atan2(cy-by,cx-bx), a=baseAng+(R()-0.5)*1.0;
         var off=rimPoint(a,hw,hh,rr);
         var px=bx+off.x, py=by+off.y, sc=1.0+R()*0.25;
-        somaMain(px,py,sc, Math.atan2(off.y,off.x), 2.3);   // halo + dendrites (behind box)
-        somaBody(px,py,sc);                                  // cell body (on top of box edge)
+        somaMain(px,py,sc, Math.atan2(off.y,off.x), 2.3); somaBody(px,py,sc);
+        NODES.push({x:px,y:py});
       }
       var gel=document.querySelector('.soma-anchor');
       if(gel){ var gr=gel.getBoundingClientRect(); if(gr.width){
         R=mb(seed*97+999);
         var gx=(gr.right+14)-cr.left, gy=(gr.top+gr.height*0.5)-cr.top;
-        somaMain(gx,gy,1.05,0.0,2.0); somaBody(gx,gy,1.05);
+        somaMain(gx,gy,1.05,0.0,2.0); somaBody(gx,gy,1.05); NODES.push({x:gx,y:gy});
       }}
       var amb=[[.58,.13,.6],[.90,.82,.55],[.12,.86,.5]];
       for(var j=0;j<amb.length;j++){ R=mb(seed*97+3000+j*77);
         var ax=W*amb[j][0], ay=H*amb[j][1], asc=amb[j][2];
-        somaMain(ax,ay,asc,null,0); somaBody(ax,ay,asc); }
+        somaMain(ax,ay,asc,null,0); somaBody(ax,ay,asc); NODES.push({x:ax,y:ay}); }
       main.shadowBlur=0;
     }
 
+    function makeLine(ax,ay,bx,by,sn){
+      var r=mb(sn), dx=bx-ax, dy=by-ay, L=Math.hypot(dx,dy)||1, nx=-dy/L, ny=dx/L;
+      var n=Math.max(6,Math.round(L/38)), pts=[];
+      for(var i=0;i<=n;i++){ var f=i/n;
+        var wob=(i===0||i===n)?0:(r()-0.5)*Math.min(46,L*0.14)*Math.sin(f*Math.PI);
+        pts.push({x:ax+dx*f+nx*wob, y:ay+dy*f+ny*wob});
+      }
+      var seg=[0], tot=0;
+      for(var i2=1;i2<pts.length;i2++){ tot+=Math.hypot(pts[i2].x-pts[i2-1].x,pts[i2].y-pts[i2-1].y); seg.push(tot); }
+      return {pts:pts,seg:seg,len:tot};
+    }
+    function ptAt(tr,t){
+      var d=Math.max(0,Math.min(1,t))*tr.len, s=tr.seg, P=tr.pts;
+      for(var i=1;i<s.length;i++){ if(d<=s[i]){ var f=(d-s[i-1])/((s[i]-s[i-1])||1);
+        return {x:P[i-1].x+(P[i].x-P[i-1].x)*f, y:P[i-1].y+(P[i].y-P[i-1].y)*f}; } }
+      return P[P.length-1];
+    }
+    function drawLine(tr,distant){
+      var P=tr.pts;
+      main.lineCap='round'; main.lineJoin='round'; main.lineWidth=0.9;
+      main.shadowBlur=4; main.shadowColor='rgba(120,180,235,0.4)';
+      if(distant){
+        var g=main.createLinearGradient(P[0].x,P[0].y,P[P.length-1].x,P[P.length-1].y);
+        g.addColorStop(0,'rgba(150,200,242,'+(0.18*dim)+')'); g.addColorStop(1,'rgba(150,200,242,0)');
+        main.strokeStyle=g;
+      } else { main.strokeStyle='rgba(150,200,242,'+(0.15*dim)+')'; }
+      main.beginPath(); main.moveTo(P[0].x,P[0].y);
+      for(var i=1;i<P.length;i++) main.lineTo(P[i].x,P[i].y);
+      main.stroke(); main.shadowBlur=0;
+    }
+    function buildTracks(W,H){
+      anim.tracks=[]; var N=NODES, seen={}, ti=0;
+      function add(ax,ay,bx,by,distant){ var tr=makeLine(ax,ay,bx,by,seed*17+(ti++)*101); tr.distant=distant; anim.tracks.push(tr); drawLine(tr,distant); }
+      for(var i=0;i<N.length;i++){
+        var bi=-1,bd=1e18;
+        for(var j=0;j<N.length;j++){ if(j===i)continue; var d=(N[j].x-N[i].x)*(N[j].x-N[i].x)+(N[j].y-N[i].y)*(N[j].y-N[i].y); if(d<bd){bd=d;bi=j;} }
+        if(bi<0)continue; var key=Math.min(i,bi)+'_'+Math.max(i,bi); if(seen[key])continue; seen[key]=1;
+        add(N[i].x,N[i].y,N[bi].x,N[bi].y,false);
+      }
+      for(var k=0;k<3&&N.length;k++){ var a=N[(k*2)%N.length], ang=k*2.3+0.7;
+        add(a.x,a.y,a.x+Math.cos(ang)*W*0.5,a.y+Math.sin(ang)*H*0.5,true); }
+    }
+    function compositeBase(){
+      main.setTransform(1,0,0,1,0,0); main.clearRect(0,0,canvas.width,canvas.height);
+      if(anim.buf) main.drawImage(anim.buf,0,0);
+    }
+    function drawPulse(tr,t){
+      var fade=Math.sin(Math.PI*Math.min(1,Math.max(0,t)));
+      for(var k=6;k>=1;k--){ var tt=t-k*0.028; if(tt<0)continue; var pp=ptAt(tr,tt);
+        main.fillStyle='rgba(192,226,255,'+(fade*0.05*(7-k))+')';
+        main.beginPath(); main.arc(pp.x,pp.y,0.8+0.12*(7-k),0,7); main.fill(); }
+      var q=ptAt(tr,t);
+      main.shadowBlur=10; main.shadowColor='rgba(150,205,255,'+(0.9*fade)+')';
+      main.fillStyle='rgba(228,243,255,'+(0.95*fade)+')';
+      main.beginPath(); main.arc(q.x,q.y,2.2,0,7); main.fill(); main.shadowBlur=0;
+    }
+    function loop(ts){
+      compositeBase();
+      main.setTransform(anim.dpr,0,0,anim.dpr,0,0);
+      for(var i=anim.pulses.length-1;i>=0;i--){ var p=anim.pulses[i];
+        var dt=ts-p.last; p.last=ts; p.t+=p.sp*dt;
+        if(p.t>=1){ anim.pulses.splice(i,1); continue; }
+        drawPulse(p.tr,p.t);
+      }
+      if(anim.pulses.length){ anim.raf=requestAnimationFrame(loop); }
+      else { anim.raf=0; compositeBase(); }
+    }
+    function spawn(){
+      if(anim.tracks.length && anim.pulses.length<2){
+        var tr=anim.tracks[(Math.random()*anim.tracks.length)|0];
+        anim.pulses.push({tr:tr,t:0,sp:1/(2000+Math.random()*1100),last:performance.now()});
+        if(!anim.raf) anim.raf=requestAnimationFrame(loop);
+      }
+      anim.timer=setTimeout(spawn, 2600+Math.random()*900);
+    }
+    function stopAnim(){ if(anim.raf)cancelAnimationFrame(anim.raf); if(anim.timer)clearTimeout(anim.timer); anim.raf=0; anim.timer=0; anim.pulses=[]; }
+
     function draw(){
+      stopAnim();
       var dpr=Math.min(window.devicePixelRatio||1,2),
           W=canvas.clientWidth||window.innerWidth,
           H=canvas.clientHeight||window.innerHeight;
@@ -179,6 +254,11 @@
       if(!dof){
         ensureTop(W,H,dpr);
         anchoredSomas(W,H,cr);
+        buildTracks(W,H);
+        var bufc=document.createElement('canvas'); bufc.width=canvas.width; bufc.height=canvas.height;
+        bufc.getContext('2d').drawImage(canvas,0,0); anim.buf=bufc;
+        anim.W=W; anim.H=H; anim.dpr=dpr;
+        if(!reduce){ anim.timer=setTimeout(spawn, 1400); }
       } else {
         if(topX){ topX.setTransform(1,0,0,1,0,0); topX.clearRect(0,0,topC.width,topC.height); }
         var blurredLayer=function(blurPx,alpha,scMin,scMax,count){
