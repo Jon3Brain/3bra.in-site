@@ -63,12 +63,12 @@
       canvas.width=W*dpr; canvas.height=H*dpr;
       main.setTransform(dpr,0,0,dpr,0,0); main.clearRect(0,0,W,H);
       R=mb(seed);
-      for(var i=0;i<5;i++){ var hx=W*(0.35+R()*0.7),hy=H*R(),hr=170+R()*240;
+      for(var i=0;i<5;i++){ var hx=W*(-0.02+R()*0.75),hy=H*R(),hr=170+R()*240;
         var gg=main.createRadialGradient(hx,hy,0,hx,hy,hr);
         gg.addColorStop(0,'rgba(40,90,150,'+(0.10*dim)+')'); gg.addColorStop(1,'transparent');
         main.fillStyle=gg; main.beginPath(); main.arc(hx,hy,hr,0,7); main.fill(); }
       if(!dof){
-        var FS=[[.6,.28,1.1],[.86,.6,1.0],[.52,.74,.85],[.97,.22,.8],[.74,.92,.78],[1.03,.46,.95],[.66,.5,.7]];
+        var FS=[[.26,.42,1.1],[.52,.74,1.0],[.18,.88,.85],[.63,.36,.8],[.40,1.06,.78],[.69,.60,.95],[.32,.64,.7]];
         paintNeurons(main,W,H,1.0,1,1.35,0,true,FS);
         main.shadowBlur=0;
         return;
