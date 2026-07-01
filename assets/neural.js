@@ -290,6 +290,7 @@
 
     draw();
     var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(draw,150);});
+    window.addEventListener('scroll',function(){clearTimeout(t);t=setTimeout(draw,180);},{passive:true});
   }
 
   function init(){ document.querySelectorAll('canvas.neural').forEach(build); }

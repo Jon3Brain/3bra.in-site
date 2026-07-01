@@ -32,10 +32,11 @@ header .wrap{display:flex;justify-content:space-between;align-items:center;
 header nav a{color:var(--dim);text-decoration:none;margin-left:18px;}
 header nav a:hover,header nav a[aria-current="page"]{color:var(--cyan);}
 
-body.home{overflow:hidden;}
+body.home{overflow-x:hidden;overflow-y:auto;}
+.col{position:relative;max-width:var(--maxw);margin:0 auto;padding:8px 24px 60px;z-index:3;}
 .stage{position:fixed;inset:0;max-width:var(--maxw);margin-inline:auto;z-index:3;pointer-events:none;}
 .stage>*{pointer-events:auto;}
-.panel{position:absolute;z-index:3;left:24px;top:104px;max-width:430px;}
+.panel{position:static;z-index:3;margin:40px 0 0;max-width:430px;}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--bright);margin:0 0 22px;}
 .status{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--amber);margin:0 0 22px;
   text-shadow:0 0 12px rgba(233,169,86,.5);}
@@ -58,10 +59,10 @@ body.home{overflow:hidden;}
 .nav-box .v{font-size:13px;font-family:var(--mono);}
 .b-nav1{right:20%;top:7%;}.b-nav2{right:8%;top:7%;}
 .b1{right:9%;top:19%;}.b2{right:31%;top:34%;}.b3{right:13%;top:58%;}.b4{right:33%;top:77%;}
-.home-foot{position:absolute;z-index:3;left:24px;bottom:28px;font-family:var(--mono);font-size:11px;color:var(--dim);}
+.home-foot{position:fixed;z-index:3;left:0;right:0;bottom:24px;max-width:var(--maxw);margin:0 auto;padding:0 24px;font-family:var(--mono);font-size:11px;color:var(--dim);}
 .home-foot a{color:var(--dim);}
-.headshot{position:absolute;z-index:2;left:60px;bottom:70px;width:262px;filter:drop-shadow(0 0 26px rgba(90,150,220,.15));}
-.headshot img{width:100%;display:block;}
+.headshot{position:static;z-index:2;display:block;width:262px;margin:32px 0 0;}
+.headshot img{width:100%;display:block;filter:drop-shadow(0 0 26px rgba(90,150,220,.15));}
 
 main.read{position:relative;z-index:2;max-width:720px;margin:0 auto;padding:40px 24px 30px;}
 .read article{background:var(--panel);border:1px solid #16243f;border-radius:14px;
@@ -101,7 +102,7 @@ footer a{color:var(--dim);}footer a:hover{color:var(--cyan);}
   .box{position:static;width:auto;display:block;margin:0 24px 12px;}
   .nav-box{display:inline-block;width:auto;margin:0 8px 8px 24px;}
   .home-foot{position:static;margin:18px 24px 30px;}
-  .headshot{position:static;width:200px;margin:14px 24px 4px;}
+  .headshot{position:static;display:block;width:200px;margin:14px 24px 4px;}
   .read article{padding:26px 22px;}
   .read h1{font-size:25px;}
 }
