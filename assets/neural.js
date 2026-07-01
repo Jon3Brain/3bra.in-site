@@ -236,7 +236,7 @@
     function spawn(){
       if(anim.tracks.length && anim.pulses.length<2){
         var tr=anim.tracks[(Math.random()*anim.tracks.length)|0];
-        anim.pulses.push({tr:tr,t:0,sp:1/(2000+Math.random()*1100),last:performance.now()});
+        anim.pulses.push({tr:tr,t:0,sp:1/2800,last:performance.now()});
         if(!anim.raf) anim.raf=requestAnimationFrame(loop);
       }
       anim.timer=setTimeout(spawn, 2600+Math.random()*900);
