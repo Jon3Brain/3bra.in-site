@@ -207,13 +207,20 @@
     }
     function drawPulse(tr,t){
       var fade=Math.sin(Math.PI*Math.min(1,Math.max(0,t)));
-      for(var k=6;k>=1;k--){ var tt=t-k*0.028; if(tt<0)continue; var pp=ptAt(tr,tt);
-        main.fillStyle='rgba(192,226,255,'+(fade*0.05*(7-k))+')';
-        main.beginPath(); main.arc(pp.x,pp.y,0.8+0.12*(7-k),0,7); main.fill(); }
+      var tl=0.09, t0=Math.max(0,t-tl), steps=8, prev=ptAt(tr,t0);
+      main.lineCap='round'; main.shadowBlur=7; main.shadowColor='rgba(150,205,255,'+(0.4*fade)+')';
+      for(var i=1;i<=steps;i++){
+        var f=i/steps, pp=ptAt(tr,t0+(t-t0)*f);
+        main.strokeStyle='rgba(190,223,255,'+(fade*0.09*f)+')';
+        main.lineWidth=0.7+0.8*f;
+        main.beginPath(); main.moveTo(prev.x,prev.y); main.lineTo(pp.x,pp.y); main.stroke();
+        prev=pp;
+      }
+      main.shadowBlur=0;
       var q=ptAt(tr,t);
-      main.shadowBlur=10; main.shadowColor='rgba(150,205,255,'+(0.9*fade)+')';
+      main.shadowBlur=10; main.shadowColor='rgba(150,205,255,'+(0.85*fade)+')';
       main.fillStyle='rgba(228,243,255,'+(0.95*fade)+')';
-      main.beginPath(); main.arc(q.x,q.y,2.2,0,7); main.fill(); main.shadowBlur=0;
+      main.beginPath(); main.arc(q.x,q.y,2.1,0,7); main.fill(); main.shadowBlur=0;
     }
     function loop(ts){
       compositeBase();
